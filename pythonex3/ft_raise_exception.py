@@ -26,8 +26,16 @@ def test_temperature():
     print("Input data is '100'")
     try:
         valid_res = input_temperature("100")
-        print(f"Input data is '{}'")
+        print(f"Input data is '{valid_res}'")
+    except ValueError as err:
+        print(f"Caught input_temperature error: {err}")
+
+    print("Input data is '-50'")
+    try:
+        valid_res = input_temperature("-50")
+        print(f"Input data is '{valid_res}'")
+    except ValueError as err:
+        print(f"Caught input_temperature error: {err}")                         
     print("All tests completed - program didn't crash!")
-                             
 
 test_temperature()
