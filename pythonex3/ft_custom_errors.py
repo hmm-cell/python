@@ -27,12 +27,12 @@ def main():
         test_plant_err()
     except PlantError as err:
         print(f"Caught PlantError: The tomato plant is wilting!")
-
+        print()
     try:
         test_water_err()
     except WaterError as err:
         print(f"Caught WaterError: Not enough water in the tank!")
-
+        print()
     print(f"Testing catching all garden errors...")
 
      try:
@@ -45,6 +45,7 @@ def main():
     except GardenError as err:
         print(f"Caught GardenError: Not enough water in the tank!")
 
+    print()
     print(f"All custom error types work correctly!")
     
 if __name__ == "__main__":
