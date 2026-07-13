@@ -4,9 +4,9 @@ def input_temperature(temp_str):
         return temp
     else:
         if temp > 40:
-            raise ValueError(f"{temp_str}"°C is too hot for plants (max 40°C)")
+            raise ValueError(f"{temp_str}°C is too hot for plants (max 40°C)")
         else:
-            raise ValueError(f"{temp_str}"°C is too cold for plants (min 0°C)")
+            raise ValueError(f"{temp_str}°C is too cold for plants (min 0°C)")
 
 def test_temperature():
     print("Input data is '25'")
