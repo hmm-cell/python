@@ -12,7 +12,7 @@ for arg in sys.argv[1: ]:
     except ValueError:
         invalid_scores.append(arg)
 
-if len(invali_params) > 0:
+if len(invalid_scores) > 0:
     for param in invalid_scores:
         print(f"Invalid parameter: '{param}'")
 
@@ -22,10 +22,11 @@ else:
     total_score = sum(valid_scores)
     avg_score = total_score / len(valid_scores)
     score_range = max(valid_scores) - min(valid_scores)
+    
     print(f"Scores processed: {valid_scores}")
     print(f"Total players: {len(valid_scores)}")
-    print(f"Total score: {sum(valid_scorea)}")
+    print(f"Total score: {sum(total_scores)}")
     print(f"Average score: {avg_score}")
     print(f"High score: {max(valid_scores)}")
-    print(f"Low score: {min(valid_scorea)}")
+    print(f"Low score: {min(valid_scores)}")
     print(f"Score range: {score_range}")
