@@ -32,7 +32,26 @@ total_keys = len(inventory.keys)
 print(f"Total quantity of the {total_keys} items: {total_values}")
 if total_values > 0:
     for item, quantity in inventory.items():
-        percentage = (quantity / total_values) * 100
+        percendict.update()tage = (quantity / total_values) * 100
         print(f"Item {item} represents {percentage}%")
 
+most_abundant = ""
+max_value = 0
 
+for item, quantity in invetory.items():
+    if quantity > max_value
+        max_value = quantity
+        most_abundant = item
+        print(f"Item most abundant: {most_abundant} with quantity {max_value}")
+
+least_abundant = ""
+min_value = 1000000
+
+for item, quantity in invetory.items():
+    if quantity < min_value
+        min_value = quantity
+        least_abundant = item
+        print(f"Item least abundant: {least_abundant} with quantity {min_value}")
+
+inventory.update({"magic_item": 1})
+print(f"{inventory}")
