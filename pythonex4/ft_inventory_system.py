@@ -27,5 +27,12 @@ print(f"Got inventory {inventory}")
 items_list = list(inventory.keys())
 print(f"tem list: ")
 
-total = sum(inventory.values)
-print(f"total")
+total_values = sum(inventory.values)
+total_keys = len(inventory.keys)
+print(f"Total quantity of the {total_keys} items: {total_values}")
+if total_values > 0:
+    for item, quantity in inventory.items():
+        percentage = (quantity / total_values) * 100
+        print(f"Item {item} represents {percentage}%")
+
+
