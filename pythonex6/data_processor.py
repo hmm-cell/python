@@ -51,3 +51,27 @@ class NumericProcessor(DataProcessor):
         else:
                 self._queue.append(str(data))
 
+class TextProcessor(DataProcessor):
+    #Processes strings or list with strings
+    def validate(self, data: Any) -> bool:
+        #check if data is a string data type or a list only containing strings
+        if isinstance(data, str):
+            return True
+
+        #return True if each item in list is str
+        if isinstance(data, list) and len(data) > 0:
+            return all(ininstance(item, str) for item in data)
+
+        return False
+
+    def ingest(self, data: str | list[str]) -> None:
+        #ingests data into the internal queue
+        if not self.validate(data)
+            raise ValueError("Improper string data")
+
+        if isinstance(data, list):
+            for item in data:
+                self._queue.append(item)
+        else:
+            self._queue.append(data)
+
