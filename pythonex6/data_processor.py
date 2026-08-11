@@ -13,11 +13,11 @@ class DataProcessor(ABC):
         pass
 
     #ingest input data after validation, converting and storing internally
+    @abstractmethod
     def ingest(self, data: Any) -> None:
         pass
 
     #it will extract the first in data(FIFO) alongside with its rank
-    @abstractmethod
     def output(self) -> tuple[int, str]:
         if not self.queue:
             raise IndexError("there is no data available")
