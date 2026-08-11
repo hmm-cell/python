@@ -35,9 +35,18 @@ class DataStream():
         self._processors.append(proc)
 
     def process_stream(self, stream: list[typing.Any]) -> None:
-        success = False;
-        for proc in self._processors:
-            if proc.validatelf._processors(proc)
+        for item in stream:
+            success = False
+            for proc in self._processors:
+                if proc.validate(item):
+                    proc.ingest(item)
+                    success = True
+                    break
+            if not success:
+                print(f"DataStream error - Can't process element in stream: {item}")
+
+    def print_processors_stats(self) -> None:
+        
 
 class NumericProcessor(DataProcessor):
     name = "Numeric Processor"
