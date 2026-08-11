@@ -159,19 +159,19 @@ if __name__ == "__main__":
 
     print("=== Code Nexus - Data Stream ===")
     print("Initialize Data Stream...")
+    
     ds = DataStream()
-    ds
+    ds.print_processors_stats()
     log_proc = LogProcessor()
     text_proc = TextProcessor()
     num_proc = NumericProcessor()
     ds.register_processor(num_proc)
-
-     print("Registering Numeric Processor")
+    print("Registering Numeric Processor")
     batch = ['Hello world', [3.14, -1, 2.71], [{'log_level': 'WARNING', 'log_message': 'Telnet access! Use ssh instead'},
     {'log_level': 'INFO', 'log_message': 'User wil is connected'}], 42, ['Hi', 'five']]
 
     print(f"Send first batch of data on stream: {batch}")
-    process_stream(batch)
+    ds.process_stream(batch)
     ds.print_processors_stats()
 
     print("Registering other data processors")
@@ -179,7 +179,15 @@ if __name__ == "__main__":
     ds.register_processor(text_proc)
 
     print("Send the same batch again")
-    process_stream(batch)
+    ds.process_stream(batch)
     ds.print_processors_stats()
 
-    
+    print("Consume some elements from the data processors: Numeric 3, Text 2, Log 1")
+    for _ in range(3):
+        rank, val = num_proc.output()
+
+    for _ in range(2):
+        rank, val = text_proc.output()
+
+    rank, val = log_proc.output()
+    ds.print_processors_stats()
