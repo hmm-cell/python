@@ -4,7 +4,7 @@ from typing import Any
 #Abstract base class that defines the polymorphism for the data processors
 class DataProcessor(ABC):
     def __init__(self) -> None:
-        self._queue: lsit[str] = []
+        self._queue: list[str] = []
         self._rank: int = 0
 
     #verify if input data is appropriate for this data procesor
@@ -13,7 +13,6 @@ class DataProcessor(ABC):
         pass
 
     #ingest input data after validation, converting and storing internally
-    @abstractmethod
     def ingest(self, data: Any) -> None:
         pass
 
@@ -36,13 +35,13 @@ class NumericProcessor(DataProcessor):
 
         #if data len > 0, item in list is int or float and not bool, return true.
         if isinstance(data, list) and len(data) > 0:
-            return all(isinstance(item, (int, float)) and not instance(item, bool) for item in data)
+            return all(isinstance(item, (int, float)) and not isinstance(item, bool) for item in data)
 
         return False
 
     def ingest(self, data: int | float | list[int | float]) -> None:
         #converts numbers into strings
-        if not self.validate(data)
+        if not self.validate(data):
             raise ValueError("Improper numeric data")
 
         if isinstance(data, list):
@@ -60,13 +59,13 @@ class TextProcessor(DataProcessor):
 
         #return True if each item in list is str
         if isinstance(data, list) and len(data) > 0:
-            return all(ininstance(item, str) for item in data)
+            return all(isinstance(item, str) for item in data)
 
         return False
 
     def ingest(self, data: str | list[str]) -> None:
         #ingests data into the internal queue
-        if not self.validate(data)
+        if not self.validate(data):
             raise ValueError("Improper string data")
 
         if isinstance(data, list):
@@ -79,11 +78,11 @@ class LogProcessor(DataProcessor):
     #Processes dictionary with strings both as keys and values
     #or List with multiple
     def validate(self, data: Any) -> bool:
-        if isinstance(data, dict)
+        if isinstance(data, dict):
         #check if it is a dict, if it is send to helper to check the dict inside
             return self.isvalid_log_dict(data)
         if isinstance(data, list) and len(data) > 0:
-            return all(isinstance(item, list) and self._is_valid_log_dict(item)
+            return all(isinstance(item, dict) and self._is_valid_log_dict(item)
                 for item in data)
 
         return False
@@ -94,25 +93,25 @@ class LogProcessor(DataProcessor):
 
     def _format_log(self, log_dict: dict[str, str]) -> str:
         #converts unformated log data into a single str
-        if "log_level" in log_dict and "log message" in log_dict:
+        if "log_level" in log_dict and "log_message" in log_dict:
             level = log_dict["log_level"]
-            msg = log_dict[log_message]
+            msg = log_dict["log_message"]
             return level + ": " + msg
         else:
             #if dict doesnt have exact key names, fallback to "join"
             val_list = []
             for val in log_dict.values():
                 val_list.append(str(val))
-            return ": " join(val_list)
+            return ": ".join(val_list)
 
     def ingest(self, data: dict[str, str] | list[dict[str, str]]) -> bool:
         #ingests log dicts. converts them into formated strs if theyre true
-        if not validate(data)
+        if not validate(data):
             raise ValueError("Improper log data")
 
-        if isisntance(data, list):
+        if isinstance(data, list):
             for item in data:
-                self._queue.append(self._format_log(data))
+                self._queue.append(self._format_log(item))
         else:
             self._queue.append(self._format_log(data))
 
