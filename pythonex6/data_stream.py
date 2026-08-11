@@ -45,9 +45,6 @@ class DataStream():
             if not success:
                 print(f"DataStream error - Can't process element in stream: {item}")
 
-    def print_processors_stats(self) -> None:
-        
-
 class NumericProcessor(DataProcessor):
     name = "Numeric Processor"
     #processes numeric type data. including int, float or lists of it
@@ -149,3 +146,10 @@ class LogProcessor(DataProcessor):
     for _ in range(2):
         rank, val = log_proc.output()
         print(f"Log entry {rank}: {val}")
+
+if __name__ == "__main__":
+    ds = DataStream()
+    num_proc = NumericProcessor()
+    ds.register_processor(num_proc)
+
+    ds.process_stream([42, "hello"])
