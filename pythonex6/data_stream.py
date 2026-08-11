@@ -45,6 +45,14 @@ class DataStream():
             if not success:
                 print(f"DataStream error - Can't process element in stream: {item}")
 
+    def print_processors_stats(self) -> None:
+        print("== DataStream statistics ==")
+        if not self._processors:
+            print(f"No processor found, no data")
+        for proc in self._processors:
+            remaining = len(proc._queue)
+            print(f"{proc.name}: total {proc._processed} items processed, remaining {remaining} on processor")
+
 class NumericProcessor(DataProcessor):
     name = "Numeric Processor"
     #processes numeric type data. including int, float or lists of it
