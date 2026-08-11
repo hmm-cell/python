@@ -24,8 +24,11 @@ class DataProcessor(ABC):
 
     #it will extract the first in data(FIFO) alongside with its rank
     def output(self) -> tuple[int, str]:
-        if not self.queue:
+        if not self._queue:
             raise IndexError("there is no data available")
+        self._rank += 1
+        value = self._queue.pop(0)
+        return self._rank, value
 
 class DataStream():
     def __init__(self) -> None:
@@ -34,7 +37,7 @@ class DataStream():
     def register_processor(self, proc: DataProcessor) -> None:
         self._processors.append(proc)
 
-    def process_stream(self, stream: list[typing.Any]) -> None:
+    def process_stream(self, stream: list[Any]) -> None:
         for item in stream:
             success = False
             for proc in self._processors:
@@ -140,7 +143,7 @@ class LogProcessor(DataProcessor):
 
     def ingest(self, data: dict[str, str] | list[dict[str, str]]) -> bool:
         #ingests log dicts. converts them into formated strs if theyre true
-        if not validate(data):
+        if not self.validate(data):
             raise ValueError("Improper log data")
 
         if isinstance(data, list):
@@ -148,46 +151,51 @@ class LogProcessor(DataProcessor):
                 self._add_to_queue(self._format_log(item))
         else:
             self._add_to_queue(self._format_log(data))
-    log_proc.ingest(log_data)
-
-    print("Extracting 2 values...")
-    for _ in range(2):
-        rank, val = log_proc.output()
-        print(f"Log entry {rank}: {val}")
 
 if __name__ == "__main__":
-
     print("=== Code Nexus - Data Stream ===")
     print("Initialize Data Stream...")
-    
+
+    # create the stream and show stats before any processor is registered
     ds = DataStream()
     ds.print_processors_stats()
+
+    # set up one processor of each type (not registered yet)
     log_proc = LogProcessor()
     text_proc = TextProcessor()
     num_proc = NumericProcessor()
-    ds.register_processor(num_proc)
+
+    # register only the numeric processor for now
     print("Registering Numeric Processor")
+    ds.register_processor(num_proc)
+
+    # build a mixed batch: numbers, strings, and log dicts all together
     batch = ['Hello world', [3.14, -1, 2.71], [{'log_level': 'WARNING', 'log_message': 'Telnet access! Use ssh instead'},
     {'log_level': 'INFO', 'log_message': 'User wil is connected'}], 42, ['Hi', 'five']]
-
     print(f"Send first batch of data on stream: {batch}")
+
+    # only numeric elements will be handled, everything else errors out
     ds.process_stream(batch)
     ds.print_processors_stats()
 
+    # now register the remaining processors so text/log data can be handled too
     print("Registering other data processors")
-    ds.register_processor(log_proc)
     ds.register_processor(text_proc)
+    ds.register_processor(log_proc)
 
+    # send the exact same batch again - this time text and log elements succeed too
     print("Send the same batch again")
     ds.process_stream(batch)
     ds.print_processors_stats()
 
+    # pull some items back out of each processor's queue (FIFO)
     print("Consume some elements from the data processors: Numeric 3, Text 2, Log 1")
     for _ in range(3):
         rank, val = num_proc.output()
-
     for _ in range(2):
         rank, val = text_proc.output()
+    for _ in range(1):
+        rank, val = log_proc.output()
 
-    rank, val = log_proc.output()
+    # totals stay the same, but "remaining" drops after consuming
     ds.print_processors_stats()
