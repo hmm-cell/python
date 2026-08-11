@@ -156,8 +156,30 @@ class LogProcessor(DataProcessor):
         print(f"Log entry {rank}: {val}")
 
 if __name__ == "__main__":
+
+    print("=== Code Nexus - Data Stream ===")
+    print("Initialize Data Stream...")
     ds = DataStream()
+    ds
+    log_proc = LogProcessor()
+    text_proc = TextProcessor()
     num_proc = NumericProcessor()
     ds.register_processor(num_proc)
 
-    ds.process_stream([42, "hello"])
+     print("Registering Numeric Processor")
+    batch = ['Hello world', [3.14, -1, 2.71], [{'log_level': 'WARNING', 'log_message': 'Telnet access! Use ssh instead'},
+    {'log_level': 'INFO', 'log_message': 'User wil is connected'}], 42, ['Hi', 'five']]
+
+    print(f"Send first batch of data on stream: {batch}")
+    process_stream(batch)
+    ds.print_processors_stats()
+
+    print("Registering other data processors")
+    ds.register_processor(log_proc)
+    ds.register_processor(text_proc)
+
+    print("Send the same batch again")
+    process_stream(batch)
+    ds.print_processors_stats()
+
+    
