@@ -1,42 +1,48 @@
 from abc import ABC, abstractmethod
 from typing import Any
-
-#Abstract base class that defines the polymorphism for the data processors
+ 
+ 
 class DataProcessor(ABC):
+    """Abstract base class defining the common processor interface."""
+ 
+    name: str
+ 
     def __init__(self) -> None:
         self._queue: list[str] = []
         self._rank: int = 0
         self._processed: int = 0
-
+ 
     def _add_to_queue(self, item: str) -> None:
         self._processed += 1
         self._queue.append(item)
-        
-    #verify if input data is appropriate for this data procesor
+ 
+    # Verify if input data is appropriate for this data processor.
     @abstractmethod
     def validate(self, data: Any) -> bool:
         pass
-
-    #ingest input data after validation, converting and storing internally
+ 
+    # Ingest input data after validation, storing it internally.
     @abstractmethod
     def ingest(self, data: Any) -> None:
         pass
-
-    #it will extract the first in data(FIFO) alongside with its rank
+ 
+    # Extract the oldest data (FIFO) along with its extraction rank.
     def output(self) -> tuple[int, str]:
         if not self._queue:
             raise IndexError("there is no data available")
+        rank = self._rank
         self._rank += 1
         value = self._queue.pop(0)
-        return self._rank, value
-
-class DataStream():
+        return rank, value
+ 
+ 
+class DataStream:
     def __init__(self) -> None:
         self._processors: list[DataProcessor] = []
-        
+ 
     def register_processor(self, proc: DataProcessor) -> None:
         self._processors.append(proc)
-
+ 
     def process_stream(self, stream: list[Any]) -> None:
         for item in stream:
             success = False
@@ -46,156 +52,179 @@ class DataStream():
                     success = True
                     break
             if not success:
-                print(f"DataStream error - Can't process element in stream: {item}")
-
+                print(
+                    "DataStream error - Can't process element in "
+                    f"stream: {item}"
+                )
+ 
     def print_processors_stats(self) -> None:
         print("== DataStream statistics ==")
         if not self._processors:
-            print(f"No processor found, no data")
+            print("No processor found, no data")
         for proc in self._processors:
             remaining = len(proc._queue)
-            print(f"{proc.name}: total {proc._processed} items processed, remaining {remaining} on processor")
-
+            print(
+                f"{proc.name}: total {proc._processed} items "
+                f"processed, remaining {remaining} on processor"
+            )
+ 
+ 
 class NumericProcessor(DataProcessor):
     name = "Numeric Processor"
-    #processes numeric type data. including int, float or lists of it
+ 
+    # Processes numeric data: int, float, or lists of either.
     def validate(self, data: Any) -> bool:
-        #verify if its a bool, since in python a bool inherits from int
-        #explicitly reject bool because we only want numeric data types
+        # bool is a subclass of int in Python, so it must be
+        # explicitly rejected here.
         if isinstance(data, bool):
             return False
-            
+ 
         if isinstance(data, (int, float)):
             return True
-
-        #if data len > 0, item in list is int or float and not bool, return true.
+ 
         if isinstance(data, list) and len(data) > 0:
-            return all(isinstance(item, (int, float)) and not isinstance(item, bool) for item in data)
-
+            return all(
+                isinstance(item, (int, float))
+                and not isinstance(item, bool)
+                for item in data
+            )
+ 
         return False
-
+ 
     def ingest(self, data: int | float | list[int | float]) -> None:
-        #converts numbers into strings
+        # Converts numbers into strings before storing them.
         if not self.validate(data):
             raise ValueError("Improper numeric data")
-
+ 
         if isinstance(data, list):
             for item in data:
                 self._add_to_queue(str(item))
         else:
-                self._add_to_queue(str(data))
-
+            self._add_to_queue(str(data))
+ 
+ 
 class TextProcessor(DataProcessor):
     name = "Text Processor"
-    #Processes strings or list with strings
+ 
+    # Processes strings or lists of strings.
     def validate(self, data: Any) -> bool:
-        #check if data is a string data type or a list only containing strings
         if isinstance(data, str):
             return True
-
-        #return True if each item in list is str
+ 
         if isinstance(data, list) and len(data) > 0:
             return all(isinstance(item, str) for item in data)
-
+ 
         return False
-
+ 
     def ingest(self, data: str | list[str]) -> None:
-        #ingests data into the internal queue
         if not self.validate(data):
             raise ValueError("Improper string data")
-
+ 
         if isinstance(data, list):
             for item in data:
                 self._add_to_queue(item)
         else:
             self._add_to_queue(data)
-
+ 
+ 
 class LogProcessor(DataProcessor):
     name = "Log Processor"
-    #Processes dictionary with strings both as keys and values
-    #or List with multiple
+ 
+    # Processes a dict of str:str pairs, or a list of such dicts.
     def validate(self, data: Any) -> bool:
         if isinstance(data, dict):
-        #check if it is a dict, if it is send to helper to check the dict inside
-            return self.isvalid_log_dict(data)
+            return self._is_valid_log_dict(data)
+ 
         if isinstance(data, list) and len(data) > 0:
-            return all(isinstance(item, dict) and self._is_valid_log_dict(item)
-                for item in data)
-
+            return all(
+                isinstance(item, dict) and self._is_valid_log_dict(item)
+                for item in data
+            )
+ 
         return False
-
-    #helper function to check dict for strs
+ 
+    # Helper: checks that every key and value in the dict is a str.
     def _is_valid_log_dict(self, d: dict[Any, Any]) -> bool:
-        return all(isinstance(key, str) and isinstance(val, str) for key, val in d.items())
-
+        return all(
+            isinstance(key, str) and isinstance(val, str)
+            for key, val in d.items()
+        )
+ 
     def _format_log(self, log_dict: dict[str, str]) -> str:
-        #converts unformated log data into a single str
+        # Converts a raw log dict into a single formatted string.
         if "log_level" in log_dict and "log_message" in log_dict:
             level = log_dict["log_level"]
             msg = log_dict["log_message"]
             return level + ": " + msg
-        else:
-            #if dict doesnt have exact key names, fallback to "join"
-            val_list = []
-            for val in log_dict.values():
-                val_list.append(str(val))
-            return ": ".join(val_list)
-
-    def ingest(self, data: dict[str, str] | list[dict[str, str]]) -> bool:
-        #ingests log dicts. converts them into formated strs if theyre true
+ 
+        # Fallback for dicts without the expected keys.
+        return ": ".join(str(val) for val in log_dict.values())
+ 
+    def ingest(
+        self, data: dict[str, str] | list[dict[str, str]]
+    ) -> None:
         if not self.validate(data):
             raise ValueError("Improper log data")
-
+ 
         if isinstance(data, list):
             for item in data:
                 self._add_to_queue(self._format_log(item))
         else:
             self._add_to_queue(self._format_log(data))
-
+ 
+ 
 if __name__ == "__main__":
     print("=== Code Nexus - Data Stream ===")
     print("Initialize Data Stream...")
-
-    # create the stream and show stats before any processor is registered
+ 
     ds = DataStream()
     ds.print_processors_stats()
-
-    # set up one processor of each type (not registered yet)
+ 
     log_proc = LogProcessor()
     text_proc = TextProcessor()
     num_proc = NumericProcessor()
-
-    # register only the numeric processor for now
+ 
     print("Registering Numeric Processor")
     ds.register_processor(num_proc)
-
-    # build a mixed batch: numbers, strings, and log dicts all together
-    batch = ['Hello world', [3.14, -1, 2.71], [{'log_level': 'WARNING', 'log_message': 'Telnet access! Use ssh instead'},
-    {'log_level': 'INFO', 'log_message': 'User wil is connected'}], 42, ['Hi', 'five']]
+ 
+    batch = [
+        'Hello world',
+        [3.14, -1, 2.71],
+        [
+            {
+                'log_level': 'WARNING',
+                'log_message': 'Telnet access! Use ssh instead',
+            },
+            {
+                'log_level': 'INFO',
+                'log_message': 'User wil is connected',
+            },
+        ],
+        42,
+        ['Hi', 'five'],
+    ]
     print(f"Send first batch of data on stream: {batch}")
-
-    # only numeric elements will be handled, everything else errors out
+ 
     ds.process_stream(batch)
     ds.print_processors_stats()
-
-    # now register the remaining processors so text/log data can be handled too
+ 
     print("Registering other data processors")
     ds.register_processor(text_proc)
     ds.register_processor(log_proc)
-
-    # send the exact same batch again - this time text and log elements succeed too
+ 
     print("Send the same batch again")
     ds.process_stream(batch)
     ds.print_processors_stats()
-
-    # pull some items back out of each processor's queue (FIFO)
-    print("Consume some elements from the data processors: Numeric 3, Text 2, Log 1")
+ 
+    print(
+        "Consume some elements from the data processors: "
+        "Numeric 3, Text 2, Log 1"
+    )
     for _ in range(3):
         rank, val = num_proc.output()
     for _ in range(2):
         rank, val = text_proc.output()
     for _ in range(1):
         rank, val = log_proc.output()
-
-    # totals stay the same, but "remaining" drops after consuming
+ 
     ds.print_processors_stats()
