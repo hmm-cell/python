@@ -2,9 +2,13 @@ from .elements import create_air, create_earth
 from elements import create_fire, create_water
 
 def healing_potion() -> str:
-    return("Healing potion brewed with"
-           f"'{create_earth()}' and '{create_air()}'")
+    return (
+        f"Healing potion brewed with '{create_earth()}' "
+        f"and '{create_air()}'"
+    )
 
 def strenght_potion() -> str:
-    return("Strenght potion brewed with"
-          f"'{create_earth()}' and '{create_air()}'")
+    return (
+        f"Strength potion brewed with '{create_fire()}' "
+        f"and '{create_water()}'"
+    )
