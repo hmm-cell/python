@@ -3,3 +3,4 @@ is intentionally left out so it stays unreachable via 'alchemy.create_earth()'.
 """
 from .elements import create_air
 from .potions import healing_potion as heal, strength_potion
+from alchemy.transmutation import lead_to_gold
