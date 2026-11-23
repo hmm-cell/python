@@ -1,19 +1,33 @@
-def input_temperature(temp_str):
+def input_temperature(temp_str: str) -> int:
     return int(temp_str)
 
-def test_temperature():
+
+def test_temperature() -> None:
+    print("=== Garden Temperature ===")
+    print()
+
     print("Input data is '25'")
     try:
-        valid_res = input_temperature("25")
-        print(f"Input data is '{valid_res}'")
+        temp = input_temperature("25")
+        print(f"Temperature is now {temp}°C")
     except ValueError as err:
         print(f"Caught input_temperature error: {err}")
+
+    print()
     print("Input data is 'abc'")
     try:
-        valid_res = input_temperature("abc")
-        print(f"Input data is '{valid_res}'")
+        temp = input_temperature("abc")
+        print(f"Temperature is now {temp}°C")
     except ValueError as err:
         print(f"Caught input_temperature error: {err}")
-    print("All tests completed - program didn't crash!")
 
-test_temperature()
+    print()
+    print("All tests completed program didn't crash!")
+
+
+def main() -> None:
+    test_temperature()
+
+
+if __name__ == "__main__":
+    main()
