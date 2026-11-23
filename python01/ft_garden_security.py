@@ -1,28 +1,26 @@
 class Plant:
-    def __init__(self, name="", height=0.0, age=0):
-        self._name = name
-        
+    def __init__(
+        self, name: str = "", height: float = 0.0, age: int = 0
+    ) -> None:
+        self._name: str = name
         if height >= 0:
-            self._height = float(height)
+            self._height: float = float(height)
         else:
             print(f"{self._name}: Error, height can't be negative")
-            self._height = 0.0  # Fallback to default value
-            
+            self._height = 0.0
         if age >= 0:
-            self._age = int(age)
+            self._age: int = int(age)
         else:
             print(f"{self._name}: Error, age can't be negative")
-            self._age = 0  # Fallback to default value
+            self._age = 0
 
-    # Safe Accessors (Getters)
-    def get_height(self):
+    def get_height(self) -> float:
         return self._height
 
-    def get_age(self):
+    def get_age(self) -> int:
         return self._age
 
-    # Controlled Modifiers (Setters)
-    def set_height(self, height):
+    def set_height(self, height: float) -> None:
         if height >= 0:
             self._height = float(height)
             print(f"Height updated: {height} cm")
@@ -30,7 +28,7 @@ class Plant:
             print(f"{self._name}: Error, height can't be negative")
             print("Height update rejected")
 
-    def set_age(self, age):
+    def set_age(self, age: int) -> None:
         if age >= 0:
             self._age = int(age)
             print(f"Age updated: {age} days")
@@ -38,19 +36,16 @@ class Plant:
             print(f"{self._name}: Error, age can't be negative")
             print("Age update rejected")
 
-    def display_status(self):
+    def show(self) -> None:
         print(f"{self._name}: {self._height:.1f}cm, {self._age} days old")
 
 
 if __name__ == "__main__":
     print("=== Garden Security System ===")
-    
     rose = Plant("Rose", 25.0, 30)
-    rose.display_status()
+    rose.show()
     print("---")
-
     rose.set_height(-5.0)
     rose.set_age(-10)
     print("---")
-
-    rose.display_status()
+    rose.show()
