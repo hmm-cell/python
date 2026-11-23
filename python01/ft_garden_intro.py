@@ -1,5 +1,3 @@
-# ft_garden_intro.py
-
 if __name__ == "__main__":
     name = "Rose"
     height = 45.5
