@@ -1,31 +1,49 @@
 import math
 
-def get_player_pos():
-    cords = ()
-    print(f"=== Game Coordinate System ===")
-    print()
-    
+
+def get_player_pos() -> tuple[float, float, float]:
     while True:
-        user_input = input("Enter new coordinates as floats in format 'x,y,z': ")
+        user_input = input(
+            "Enter new coordinates as floats in format 'x,y,z': "
+        )
         try:
-            x, y, z = [float(i) for i in user_input.split(',')]
+            parts = user_input.split(",")
+            if len(parts) != 3:
+                print("Invalid syntax")
+                continue
+            x = float(parts[0])
+            y = float(parts[1])
+            z = float(parts[2])
             return (x, y, z)
-            
-        except ValueError:
-            print(f"Invalid syntax")
+        except ValueError as err:
+            print(f"Error on parameter: {err}")
 
-coords0 = get_player_pos()
-print(f"Got a first tuple: ({coords0})")
-print(f"It includes: X={coords0[0]}, Y={coords0[1]}, Z={coords0[2]}")
-dist_to_center = math.sqrt(coords0[0]**2 + coords0[1]**2 + coords0[2]**2)
-print(f"Distance to center: {dist_to_center}")
 
-print(f"Get a second set of coordinates")
-coords1 = get_player_pos()
-print(f"Got a first tuple: ({coords1})")
-print(f"It includes: X={coords1[0]}, Y={coords1[1]}, Z={coords1[2]}")
-dist_to_center = math.sqrt(coords1[0]**2 + coords1[1]**2 + coords1[2]**2)
-print(f"Distance to center: {dist_to_center}")
+def main() -> None:
+    print("=== Game Coordinate System ===")
 
-dist_btwn = math.sqrt((c1[0] - c0[0])**2 + (c1[1] - c0[1])**2 + (c1[2] - c0[2])**2)
-print(f"Distance between the 2 sets of coordinates: {dist_between:.4f}")
+    print("Get a first set of coordinates")
+    coords0 = get_player_pos()
+    print(f"Got a first tuple: {coords0}")
+    print(f"It includes: X={coords0[0]}, Y={coords0[1]}, Z={coords0[2]}")
+    dist_to_center = round(
+        math.sqrt(coords0[0] ** 2 + coords0[1] ** 2 + coords0[2] ** 2),
+        4,
+    )
+    print(f"Distance to center: {dist_to_center}")
+
+    print("Get a second set of coordinates")
+    coords1 = get_player_pos()
+    dist_btwn = round(
+        math.sqrt(
+            (coords1[0] - coords0[0]) ** 2
+            + (coords1[1] - coords0[1]) ** 2
+            + (coords1[2] - coords0[2]) ** 2
+        ),
+        4,
+    )
+    print(f"Distance between the sets of coordinates: {dist_btwn}")
+
+
+if __name__ == "__main__":
+    main()
