@@ -1,7 +1,9 @@
 from .light_validator import validate_ingredients
 
-
-__all__ = ["light_spell_allowed_ingredients", "light_spell_record"]
+__all__: list[str] = [
+    "light_spell_allowed_ingredients",
+    "light_spell_record",
+]
 
 
 def light_spell_allowed_ingredients() -> list[str]:
