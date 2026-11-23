@@ -1,22 +1,28 @@
 import sys
 import typing
 
-if len(sys.argv) < 2:
-    print(f"Usage: {sys.argv[0]} <file>")
-    sys.exit(1)
 
-filename = sys.argv[1]
-print(f"=== Cyber Archives Recovery ===")
-print(f"Accessing file'{filename}'")
+def main() -> None:
+    if len(sys.argv) < 2:
+        print(f"Usage: {sys.argv[0]} <file>")
+        sys.exit(1)
 
-try:
-    file: typing.IO = open(filename, 'r')
-    content = file.read()
-    print(f"---\n")
-    print(f"{content}")
-    print(f"---\n")
-    print(f"File '{filename}' closed.")
-    file.close()
-except Exception as err:
-    print(f"Error opening file '{nome_ficheiro}': {err}")
-    sys.exit(1)
+    filename: str = sys.argv[1]
+    print("=== Cyber Archives Recovery ===")
+    print(f"Accessing file '{filename}'")
+
+    try:
+        file: typing.IO[str] = open(filename, "r")
+        content: str = file.read()
+        print("---")
+        print(content, end="" if content.endswith("\n") else "\n")
+        print("---")
+        file.close()
+        print(f"File '{filename}' closed.")
+    except Exception as err:
+        print(f"Error opening file '{filename}': {err}")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
