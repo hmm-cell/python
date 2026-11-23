@@ -1,41 +1,54 @@
-def input_temperature(temp_str):
+def input_temperature(temp_str: str) -> int:
     temp = int(temp_str)
     if 0 <= temp <= 40:
         return temp
-    else:
-        if temp > 40:
-            raise ValueError(f"{temp_str}°C is too hot for plants (max 40°C)")
-        else:
-            raise ValueError(f"{temp_str}°C is too cold for plants (min 0°C)")
+    if temp > 40:
+        raise ValueError(f"{temp_str}°C is too hot for plants (max 40°C)")
+    raise ValueError(f"{temp_str}°C is too cold for plants (min 0°C)")
 
-def test_temperature():
+
+def test_temperature() -> None:
+    print("=== Garden Temperature Checker ===")
+    print()
+
     print("Input data is '25'")
     try:
-        valid_res = input_temperature("25")
-        print(f"Input data is '{valid_res}'")
+        temp = input_temperature("25")
+        print(f"Temperature is now {temp}°C")
     except ValueError as err:
         print(f"Caught input_temperature error: {err}")
-                             
+
+    print()
     print("Input data is 'abc'")
     try:
-        valid_res = input_temperature("abc")
-        print(f"Input data is '{valid_res}'")
+        temp = input_temperature("abc")
+        print(f"Temperature is now {temp}°C")
     except ValueError as err:
         print(f"Caught input_temperature error: {err}")
 
+    print()
     print("Input data is '100'")
     try:
-        valid_res = input_temperature("100")
-        print(f"Input data is '{valid_res}'")
+        temp = input_temperature("100")
+        print(f"Temperature is now {temp}°C")
     except ValueError as err:
         print(f"Caught input_temperature error: {err}")
 
+    print()
     print("Input data is '-50'")
     try:
-        valid_res = input_temperature("-50")
-        print(f"Input data is '{valid_res}'")
+        temp = input_temperature("-50")
+        print(f"Temperature is now {temp}°C")
     except ValueError as err:
-        print(f"Caught input_temperature error: {err}")                         
-    print("All tests completed - program didn't crash!")
+        print(f"Caught input_temperature error: {err}")
 
-test_temperature()
+    print()
+    print("All tests completed program didn't crash!")
+
+
+def main() -> None:
+    test_temperature()
+
+
+if __name__ == "__main__":
+    main()
