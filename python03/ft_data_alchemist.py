@@ -1,29 +1,42 @@
 import random
 
-names = ['Alice', 'bob', 'Charlie', 'dylan', 'Emma', 'Gregory', 'john', 'kevin', 'Liam']
-print(f"Initial list of players: {names}")
 
-capitalize_names = [name.capitalize() for name in names]
-print(f"New list with all names capitalized: {capitalize_names}")
+def main() -> None:
+    names = [
+        'Alice',
+        'bob',
+        'Charlie',
+        'dylan',
+        'Emma',
+        'Gregory',
+        'john',
+        'kevin',
+        'Liam',
+    ]
+    print("=== Game Data Alchemist ===")
+    print(f"Initial list of players: {names}")
 
-capitalized_names = [name for name in names if name[0].isupper()]
-print(f"New list of capitalized names only: {capitalized_names}")
+    all_capitalized = [name.capitalize() for name in names]
+    print(f"New list with all names capitalized: {all_capitalized}")
 
-player_scores = {name: random.randint(1, 1000) for name in capitalize_names}
-print(f"Score list: {player_scores}")
+    only_capitalized = [name for name in names if name[0].isupper()]
+    print(f"New list of capitalized names only: {only_capitalized}")
 
-avg_score = (sum(player_scores.values()) / len(player_scores.keys()))
-print(f"Score average is {avg_score}")
+    player_scores = {
+        name: random.randint(1, 1000) for name in all_capitalized
+    }
+    print(f"Score dict: {player_scores}")
 
-scores_remaining = [[name, score] for name, score in player_scores.items()]
-high_scores_ordered = {}
+    avg_score = round(sum(player_scores.values()) / len(player_scores), 2)
+    print(f"Score average is {avg_score}")
 
-for _ in range(len(scores_remaining)):
-    highest_pair = scores_remaining[0]
-    for pair in scores_remaining:
-        if pair[1] > highest_pair[1]:
-            highest_pair = pair
-    high_scores_ordered[highest_pair[0]] = highest_pair[1]
-    scores_remaining.remove(highest_pair)
+    high_scores = {
+        name: score
+        for name, score in player_scores.items()
+        if score > avg_score
+    }
+    print(f"High scores: {high_scores}")
 
-print(f"High scores: {high_scores_ordered}")
+
+if __name__ == "__main__":
+    main()
